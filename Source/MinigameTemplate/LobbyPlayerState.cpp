@@ -58,6 +58,10 @@ void ALobbyPlayerState::OnIsRedTeamChanged()
 	}
 	LobbyPlayerCharacter->SetMaterialByPlayerTeam(IsRedTeam);
 
+	//Widget Also Changes.
+	//How To Get Controller Even Not Owning.
+	//GetWorld()->GetFirstPlayerController();
+
 }
 
 void ALobbyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

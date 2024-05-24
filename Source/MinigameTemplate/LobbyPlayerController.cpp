@@ -7,6 +7,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "LobbyPlayerState.h"
 #include "MinigameTemplateCharacter.h"
+#include "UI/LobbyWidget.h"
+#include "Components/WrapBox.h"
+#include "LobbyGameStateBase.h"
 
 
 void ALobbyPlayerController::BeginPlay()
@@ -18,8 +21,22 @@ void ALobbyPlayerController::BeginPlay()
 
 	if (IsLocalController())
 	{
-		UUserWidget* LobbyWidget = CreateWidget<UUserWidget>(this, LobbyWidgetClass);
-		LobbyWidget->AddToViewport();
+		UUserWidget* Widget = CreateWidget<UUserWidget>(this, LobbyWidgetClass);
+		Widget->AddToViewport();
+
+		auto LobbyWidget = Cast<ULobbyWidget>(Widget);
+		if (!IsValid(LobbyWidget))
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("LobbyWidget Error : LobbyPlayerController BeginPlay()"));
+			return;
+		}
+
+		// can i get all playerstate here?
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("%d asdflkjlk"), GetWorld()->GetGameState()->PlayerArray.Num() ) );
+
+		//LobbyWidget->PlayersListWrapBox->GetAllChildren();
+		//LobbyWidget->PlayersListWrapBox->AddChildToWrapBox();
+
 	}
 
 

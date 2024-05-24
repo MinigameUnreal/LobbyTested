@@ -13,6 +13,8 @@ class AMinigameTemplateGameMode : public AGameModeBase
 
 public:
 	AMinigameTemplateGameMode();
+
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 };
 
 
