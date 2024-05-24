@@ -35,6 +35,7 @@ void ALobbyPlayerController::BeginPlay()
 void ALobbyPlayerController::RequestChangeCharacter(const FString& NewCharacterName)
 {
 	// If Server, Just Do it
+	// else Client, Pass to Server.
 	if (HasAuthority())
 	{
 		TSubclassOf<APawn>* NewCharacterClass = CharacterClassesMap.Find(NewCharacterName);
@@ -44,13 +45,20 @@ void ALobbyPlayerController::RequestChangeCharacter(const FString& NewCharacterN
 		}
 
 	}
-	// If Client, Pass to Server.
-
+	else
+	{
+		SV_RequestChangeCharacter(NewCharacterName);
+	}
 
 }
 
 void ALobbyPlayerController::SV_RequestChangeCharacter_Implementation(const FString& NewCharacterName)
 {
+	TSubclassOf<APawn>* NewCharacterClass = CharacterClassesMap.Find(NewCharacterName);
+	if (IsValid(*NewCharacterClass))
+	{
+		ChangeCharacter(*NewCharacterClass);
+	}
 }
 
 void ALobbyPlayerController::ChangeCharacter(TSubclassOf<APawn> NewCharacter)
