@@ -32,4 +32,9 @@ protected:
 	void SV_RequestChangeCharacter(const FString& NewCharacterName);
 
 	void ChangeCharacter(TSubclassOf<APawn> NewCharacter);
+
+//public:
+//	/** MappingContext */
+//	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+//	class UInputMappingContext* DefaultMappingContext;
 };

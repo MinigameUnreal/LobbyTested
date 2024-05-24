@@ -75,5 +75,8 @@ protected:
 
 public:
 	void SetMaterialByPlayerTeam(bool IsRedTeam);
+
+	virtual void PossessedBy(AController* NewController) override;
+
 };
 

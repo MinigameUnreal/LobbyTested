@@ -63,43 +63,33 @@ void AMinigameTemplateCharacter::BeginPlay()
 
 
 	MeshMID = GetMesh()->CreateDynamicMaterialInstance(0);
-	// 상속하는 블프에서 메시랑 머티리얼이 세팅
-	// 생성자에서 바로 메시에 접근하려고 하면 아직 세팅이 안되어 있을 것.
-	// 비긴플레이에서 처리하기로.
-	if (IsValid(MeshMID))
+
+	auto LobbyPS = GetPlayerState<ALobbyPlayerState>();
+	if (IsValid(LobbyPS))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, TEXT("CreateDynamicMaterialInstance"));
-		auto PS = Cast<ALobbyPlayerState>(GetPlayerState());
-		if (IsValid(PS))
-		{
-			// Pawn 의 비긴플레이에서 아직 플레이어스테이트에 접근 못할 수 있지. 아직 빙의가 안되있거나 하면.
-			//if (PS->GetIsRedTeam())
-			//{
-			//	MeshMID->SetVectorParameterValue(FName("Tint"), FVector4(1.0, 0.0, 0.0, 1.0));
-
-			//}
-			//else
-			//{
-			//	MeshMID->SetVectorParameterValue(FName("Tint"), FVector4(0.0, 0.0, 1.0, 1.0));
-
-			//}
-			
-		}
-		
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Magenta, TEXT("Char BeginPlay, SetMaterial Success?"));
+		SetMaterialByPlayerTeam(LobbyPS->GetIsRedTeam());
 	}
 
-	//Add Input Mapping Context
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("Char Begin Play MID Setted"));
+
+	// Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
+		//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("Add Mapping Context"));
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
 }
 
 void AMinigameTemplateCharacter::SetMaterialByPlayerTeam(bool IsRedTeam)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, TEXT("Material Setted Start"));
+
+	// Why Not Valid?
 	if (IsValid(MeshMID))
 	{
 		if (IsRedTeam)
@@ -111,18 +101,40 @@ void AMinigameTemplateCharacter::SetMaterialByPlayerTeam(bool IsRedTeam)
 		{
 			MeshMID->SetVectorParameterValue(FName("Tint"), FVector4(0.0, 0.0, 1.0, 1.0));
 		}
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, TEXT("Material Setted"));
 	}
 
 }
+
+void AMinigameTemplateCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	//Add Input Mapping Context
+	if (APlayerController* PlayerController = Cast<APlayerController>(NewController))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		}
+
+		auto LobbyPS = PlayerController->GetPlayerState<ALobbyPlayerState>();
+		SetMaterialByPlayerTeam(LobbyPS->GetIsRedTeam());
+	}
+
+
+}
+
+
 
 //////////////////////////////////////////////////////////////////////////
 // Input
 
 void AMinigameTemplateCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
+
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
-		
+
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);

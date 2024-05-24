@@ -14,6 +14,8 @@ class MINIGAMETEMPLATE_API ALobbyPlayerState : public APlayerState
 {
 	GENERATED_BODY()
 
+protected:
+	virtual void BeginPlay() override;
 
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_IsRedTeam)
@@ -35,5 +37,9 @@ protected:
 
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 
+	// Call when OnPawnSet Done.
+	UFUNCTION()
+	void SetPlayerPawn(APlayerState* Player, APawn* NewPawn, APawn* OldPawn);
 };

@@ -6,6 +6,12 @@
 #include "MinigameTemplateCharacter.h"
 
 
+void ALobbyPlayerState::BeginPlay()
+{
+	Super::BeginPlay();
+	OnPawnSet.AddDynamic(this, &ThisClass::SetPlayerPawn);
+}
+
 void ALobbyPlayerState::SetIsRedTeamTo(bool IsChecked)
 {
 	//if server
@@ -44,20 +50,11 @@ void ALobbyPlayerState::OnRep_IsRedTeam()
 
 void ALobbyPlayerState::OnIsRedTeamChanged()
 {
-	// 폰 색깔 변경.
-	if (IsRedTeam)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("Set To Red"));
-
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, TEXT("Set To Blue"));
-	}
 	auto LobbyPlayerCharacter = Cast<AMinigameTemplateCharacter> (GetPawn() );
 	if (!IsValid(LobbyPlayerCharacter))
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("Pawn From PS Not available"));
+		return;
 	}
 	LobbyPlayerCharacter->SetMaterialByPlayerTeam(IsRedTeam);
 
@@ -68,4 +65,18 @@ void ALobbyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ALobbyPlayerState, IsRedTeam);
+}
+
+void ALobbyPlayerState::SetPlayerPawn(APlayerState* Player, APawn* NewPawn, APawn* OldPawn)
+{
+	if (!HasAuthority())
+	{
+		auto NewCharacter = Cast<AMinigameTemplateCharacter>(NewPawn);
+		if (!IsValid(NewCharacter))
+		{
+			return;
+		}
+		NewCharacter->SetMaterialByPlayerTeam(IsRedTeam);
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("OnPawnSet"));
+	}
 }

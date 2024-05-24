@@ -3,6 +3,11 @@
 
 #include "LobbyPlayerController.h"
 #include "Blueprint/UserWidget.h" 
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "LobbyPlayerState.h"
+#include "MinigameTemplateCharacter.h"
+
 
 void ALobbyPlayerController::BeginPlay()
 {
@@ -17,6 +22,14 @@ void ALobbyPlayerController::BeginPlay()
 		LobbyWidget->AddToViewport();
 	}
 
+
+
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("Add Mapping Context"));
+	//if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>( GetLocalPlayer() ))
+	//{
+	//	Subsystem->AddMappingContext(DefaultMappingContext, 0);
+	//}
+	
 }
 
 void ALobbyPlayerController::RequestChangeCharacter(const FString& NewCharacterName)
@@ -43,7 +56,7 @@ void ALobbyPlayerController::SV_RequestChangeCharacter_Implementation(const FStr
 void ALobbyPlayerController::ChangeCharacter(TSubclassOf<APawn> NewCharacter)
 {
 	// Only In Server.
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Emerald,NewCharacter->GetName() );
+	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Emerald,NewCharacter->GetName() );
 
 	// Destroy Pawn, ReSpawn, Possess
 	auto CurrentPawn = GetPawn();
@@ -52,6 +65,11 @@ void ALobbyPlayerController::ChangeCharacter(TSubclassOf<APawn> NewCharacter)
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	GetPawn()->Destroy();
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Emerald, TEXT("------------Spawn Actor Start-------"));
 	APawn* NewPawn = Cast<APawn>( GetWorld()->SpawnActor(NewCharacter, &SpawnTransform, SpawnParameters) );
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Emerald, TEXT("------------Spawn Actor Done-------"));
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Emerald, TEXT("------------Possess Actor Start-------"));
 	Possess(NewPawn);
+	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Emerald, TEXT("------------Possess Actor Done-------"));
+
 }
