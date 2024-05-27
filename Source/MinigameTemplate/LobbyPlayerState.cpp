@@ -130,25 +130,8 @@ void ALobbyPlayerState::OnRep_SelectedCharacter()
 
 void ALobbyPlayerState::UpdatePlayerListWidget()
 {
-	AController* PC;
-	if (HasAuthority())
-	{
-		
-		//PC = GetOwningController();
-		PC = GetWorld()->GetFirstPlayerController();
+	AController* PC = GetWorld()->GetFirstPlayerController();
 
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("-------------"));
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, PC->GetName());
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("-------------"));
-	}
-	else
-	{
-		PC = GetWorld()->GetFirstPlayerController();
-
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, TEXT("-------------"));
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, PC->GetName());
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, TEXT("-------------"));
-	}
 	if (PC == nullptr)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("No Controller : LobbyPS -> UpdatePlayerListWidget()")); //BP.... (No StaticClass(). It Returns Pawn

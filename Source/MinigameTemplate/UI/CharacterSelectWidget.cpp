@@ -48,8 +48,6 @@ void UCharacterSelectWidget::OnSelectCharacter()
 			return;
 		}
 		LobbyPS->SetSelectedCharacter(CharacterName);
-		// Then At Player Controller If Server, Do.
-		//							 If Client, RPC to Server.
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, CurrentPawn->GetClass()->GetName()); //BP.... (No StaticClass(). It Returns Pawn
 	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, CharacterClass->GetName());	//BP_.....
