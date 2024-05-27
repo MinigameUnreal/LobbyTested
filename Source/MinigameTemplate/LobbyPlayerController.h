@@ -24,17 +24,16 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TMap<FString, TSubclassOf<APawn>> CharacterClassesMap;
 
+
+
 public:
-	void RequestChangeCharacter(const FString& NewCharacterName);
+	void ChangeCharacter(const FString& NewCharacterName);
 
 protected:
-	UFUNCTION(Server, Reliable)
-	void SV_RequestChangeCharacter(const FString& NewCharacterName);
+	class ULobbyWidget* LobbyWidget;
 
-	void ChangeCharacter(TSubclassOf<APawn> NewCharacter);
+public:
+	void LobbyWidgetUpdate();
 
-//public:
-//	/** MappingContext */
-//	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-//	class UInputMappingContext* DefaultMappingContext;
+
 };

@@ -5,6 +5,7 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "../LobbyPlayerController.h"
+#include "../LobbyPlayerState.h"
 
 void UCharacterSelectWidget::NativeConstruct()
 {
@@ -21,6 +22,7 @@ void UCharacterSelectWidget::OnSelectCharacter()
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Magenta, TEXT("Pawn Not Valid"));
 		return;
 	}
+
 	if (CurrentPawn->GetClass() == CharacterClass)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Magenta, TEXT("Same Class Selected"));
@@ -37,8 +39,15 @@ void UCharacterSelectWidget::OnSelectCharacter()
 
 			return;
 		}
+		auto LobbyPS = LobbyPC->GetPlayerState<ALobbyPlayerState>();
 		// call Lobby Controller's Change Pawn Func.
-		LobbyPC->RequestChangeCharacter(CharacterName);
+		if (!IsValid(LobbyPS))
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("PS Not Available : CharacterSelectWidget::OnSelectCharacter()"));
+
+			return;
+		}
+		LobbyPS->SetSelectedCharacter(CharacterName);
 		// Then At Player Controller If Server, Do.
 		//							 If Client, RPC to Server.
 	}

@@ -4,6 +4,7 @@
 #include "LobbyPlayerState.h"
 #include "Net/UnrealNetwork.h"
 #include "MinigameTemplateCharacter.h"
+#include "LobbyPlayerController.h"
 
 
 void ALobbyPlayerState::BeginPlay()
@@ -64,11 +65,58 @@ void ALobbyPlayerState::OnIsRedTeamChanged()
 
 }
 
+void ALobbyPlayerState::SetSelectedCharacter(FString NewCharacter)
+{
+	// If Server, Just Do it
+// else Client, Pass to Server.
+	if (HasAuthority())
+	{
+		SelectedCharacter = NewCharacter;
+		OnChangeCharacter();
+
+	}
+	else
+	{
+		SV_RequestChangeCharacter(NewCharacter);
+	}
+}
+
+FString ALobbyPlayerState::GetSelectedCharacter()
+{
+	return SelectedCharacter;
+}
+
+void ALobbyPlayerState::SV_RequestChangeCharacter_Implementation(const FString& NewCharacterName)
+{
+	SelectedCharacter = NewCharacterName;
+	OnChangeCharacter();
+}
+
+void ALobbyPlayerState::OnChangeCharacter()
+{
+	// Only In Server.
+	// call controller's change character?
+	// and change ui
+	auto LobbyPC = Cast<ALobbyPlayerController>(GetPlayerController());
+	if (!IsValid(LobbyPC))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("PlayerController Not Available : OnChangeCharacter()"));
+		return;
+	}
+	LobbyPC->ChangeCharacter(SelectedCharacter);
+}
+
+void ALobbyPlayerState::OnRep_SelectedCharacter()
+{
+	// on client. change ui
+}
+
 void ALobbyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ALobbyPlayerState, IsRedTeam);
+	DOREPLIFETIME(ALobbyPlayerState, SelectedCharacter);
 }
 
 void ALobbyPlayerState::SetPlayerPawn(APlayerState* Player, APawn* NewPawn, APawn* OldPawn)

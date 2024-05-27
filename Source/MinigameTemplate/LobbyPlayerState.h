@@ -17,6 +17,7 @@ class MINIGAMETEMPLATE_API ALobbyPlayerState : public APlayerState
 protected:
 	virtual void BeginPlay() override;
 
+	// ----------- IsRedTeam's
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_IsRedTeam)
 	bool IsRedTeam;
@@ -34,6 +35,25 @@ protected:
 	void OnRep_IsRedTeam();
 
 	void OnIsRedTeamChanged();
+
+	// ------------ Selected Character's 
+protected:
+	UPROPERTY(ReplicatedUsing = OnRep_SelectedCharacter)
+	FString SelectedCharacter;
+
+public:
+	void SetSelectedCharacter(FString NewCharacter);
+	FString GetSelectedCharacter();
+
+protected:
+	UFUNCTION(Server, Reliable)
+	void SV_RequestChangeCharacter(const FString& NewCharacterName);
+
+	void OnChangeCharacter();
+	
+	UFUNCTION()
+	void OnRep_SelectedCharacter();
+
 
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
