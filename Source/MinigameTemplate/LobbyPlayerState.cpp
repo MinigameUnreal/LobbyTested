@@ -13,6 +13,16 @@ void ALobbyPlayerState::BeginPlay()
 	OnPawnSet.AddDynamic(this, &ThisClass::SetPlayerPawn);
 }
 
+void ALobbyPlayerState::SetPlayerEnterID(int32 NewEnterID)
+{
+	PlayerEnterID = NewEnterID;
+}
+
+int32 ALobbyPlayerState::GetPlayerEnterID()
+{
+	return PlayerEnterID;
+}
+
 void ALobbyPlayerState::SetIsRedTeamTo(bool IsChecked)
 {
 	//if server
@@ -47,6 +57,10 @@ void ALobbyPlayerState::OnRep_IsRedTeam()
 {
 	// 화면 업데이트 함수 호출
 	OnIsRedTeamChanged();
+
+	//Widget Also Changes.
+	UpdatePlayerListWidget();
+
 }
 
 void ALobbyPlayerState::OnIsRedTeamChanged()
@@ -60,8 +74,8 @@ void ALobbyPlayerState::OnIsRedTeamChanged()
 	LobbyPlayerCharacter->SetMaterialByPlayerTeam(IsRedTeam);
 
 	//Widget Also Changes.
-	//How To Get Controller Even Not Owning.
-	//GetWorld()->GetFirstPlayerController();
+
+	UpdatePlayerListWidget();
 
 }
 
@@ -96,7 +110,6 @@ void ALobbyPlayerState::OnChangeCharacter()
 {
 	// Only In Server.
 	// call controller's change character?
-	// and change ui
 	auto LobbyPC = Cast<ALobbyPlayerController>(GetPlayerController());
 	if (!IsValid(LobbyPC))
 	{
@@ -104,11 +117,53 @@ void ALobbyPlayerState::OnChangeCharacter()
 		return;
 	}
 	LobbyPC->ChangeCharacter(SelectedCharacter);
+
+	//Change UI
+	UpdatePlayerListWidget();
 }
 
 void ALobbyPlayerState::OnRep_SelectedCharacter()
 {
 	// on client. change ui
+	UpdatePlayerListWidget();
+}
+
+void ALobbyPlayerState::UpdatePlayerListWidget()
+{
+	AController* PC;
+	if (HasAuthority())
+	{
+		
+		//PC = GetOwningController();
+		PC = GetWorld()->GetFirstPlayerController();
+
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("-------------"));
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, PC->GetName());
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("-------------"));
+	}
+	else
+	{
+		PC = GetWorld()->GetFirstPlayerController();
+
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, TEXT("-------------"));
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, PC->GetName());
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, TEXT("-------------"));
+	}
+	if (PC == nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("No Controller : LobbyPS -> UpdatePlayerListWidget()")); //BP.... (No StaticClass(). It Returns Pawn
+		return;
+	}
+
+	// call PC's edit widget.
+	auto LobbyPC = Cast<ALobbyPlayerController>(PC);
+	if (!IsValid(LobbyPC))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("LobbyPC Is Not Valid : LobbyPS -> UpdatePlayerListWidget()")); //BP.... (No StaticClass(). It Returns Pawn
+		return;
+	}
+	LobbyPC->LobbyWidgetUpdate();
+
 }
 
 void ALobbyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -131,4 +186,12 @@ void ALobbyPlayerState::SetPlayerPawn(APlayerState* Player, APawn* NewPawn, APaw
 		NewCharacter->SetMaterialByPlayerTeam(IsRedTeam);
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("OnPawnSet"));
 	}
+
+	auto LobbyPC = Cast<ALobbyPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (!IsValid(LobbyPC))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("LobbyPC Is Not Valid : LobbyPS -> UpdatePlayerListWidget()")); //BP.... (No StaticClass(). It Returns Pawn
+		return;
+	}
+	LobbyPC->LobbyWidgetUpdate();
 }

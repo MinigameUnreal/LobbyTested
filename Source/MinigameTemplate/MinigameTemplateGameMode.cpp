@@ -47,11 +47,7 @@ void AMinigameTemplateGameMode::PostLogin(APlayerController* NewPlayer)
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, FString::Printf(TEXT("%d : Current GameState's PlayerArray's Num"), LobbyGS->PlayerArray.Num())); // It Seems Okay 2
 
-	// access to controller's widget edit function here
-	
-	
-	//call RPC (controller's) to client, to set widget.
-
-
+	LobbyPS->SetPlayerEnterID(PlayerIDOfNextPlayer);
+	PlayerIDOfNextPlayer++;
 
 }

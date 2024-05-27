@@ -7,5 +7,14 @@
 
 void UPlayerCardWidget::CardUpdate(bool IsRed, const FString& SelectedCharacter)
 {
+	if (IsRed)
+	{
+		TeamImage->SetBrushTintColor(FSlateColor(FColor::Red));
+	}
+	else
+	{
+		TeamImage->SetBrushTintColor(FSlateColor(FColor::Blue));
+	}
 
+	CharacterText->SetText(FText::FromString(SelectedCharacter));
 }

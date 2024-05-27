@@ -17,7 +17,13 @@ class MINIGAMETEMPLATE_API ALobbyPlayerState : public APlayerState
 protected:
 	virtual void BeginPlay() override;
 
-	// ----------- IsRedTeam's
+	// 먼저들어온 사람부터 0, 1, 2, 3...
+	int32 PlayerEnterID = 0;
+public:
+	void SetPlayerEnterID(int32 NewEnterID);
+	int32 GetPlayerEnterID();
+
+// ----------- IsRedTeam's
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_IsRedTeam)
 	bool IsRedTeam;
@@ -36,10 +42,10 @@ protected:
 
 	void OnIsRedTeamChanged();
 
-	// ------------ Selected Character's 
+// ------------ Selected Character's 
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_SelectedCharacter)
-	FString SelectedCharacter;
+	FString SelectedCharacter = "Quinn";
 
 public:
 	void SetSelectedCharacter(FString NewCharacter);
@@ -54,6 +60,11 @@ protected:
 	UFUNCTION()
 	void OnRep_SelectedCharacter();
 
+
+	// ------------- Change LobbyUI's Player List widget.
+protected:
+	// Update UI
+	void UpdatePlayerListWidget();
 
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

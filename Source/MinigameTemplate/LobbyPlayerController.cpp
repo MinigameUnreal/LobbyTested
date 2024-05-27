@@ -10,7 +10,7 @@
 #include "UI/LobbyWidget.h"
 #include "Components/WrapBox.h"
 #include "LobbyGameStateBase.h"
-
+#include "UI/PlayerCardWidget.h"
 
 void ALobbyPlayerController::BeginPlay()
 {
@@ -34,7 +34,7 @@ void ALobbyPlayerController::BeginPlay()
 		// can i get all playerstate here?
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("%d asdflkjlk"), GetWorld()->GetGameState()->PlayerArray.Num() ) );
 
-
+		LobbyWidgetUpdate();
 
 	}
 
@@ -83,9 +83,22 @@ void ALobbyPlayerController::LobbyWidgetUpdate()
 	int32 NumberOfPlayers = LobbyGS->PlayerArray.Num();
 	for (int32 i = 0; i < NumberOfPlayers; ++i)
 	{
-		TObjectPtr<APlayerState> PS = LobbyGS->PlayerArray[i];
-		LobbyWidget->PlayersListWrapBox->GetChildAt(i);
+		ALobbyPlayerState* LobbyPS = Cast<ALobbyPlayerState>(LobbyGS->PlayerArray[i]);
+		if (!IsValid(LobbyPS))
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("LobbyPS Not Valid : LobbyPlayerController LobbyWidgetUpdate()"));
+			continue;
+		}
+		auto PlayerCard = Cast<UPlayerCardWidget>( LobbyWidget->PlayersListWrapBox->GetChildAt( i ) );
+		if (!IsValid(PlayerCard))
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("PlayerCard Not Valid : LobbyPlayerController LobbyWidgetUpdate()"));
+			continue;
+		}
+
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, FString::Printf(TEXT("Player %d card ready to edit"), i));
+		PlayerCard->CardUpdate(LobbyPS->GetIsRedTeam(), LobbyPS->GetSelectedCharacter());
 	}
 	// from game state -> edit widget.
-	LobbyWidget->PlayersListWrapBox->GetChildAt(0);
+	//LobbyWidget->PlayersListWrapBox->GetChildAt(0);
 }

@@ -15,6 +15,9 @@ public:
 	AMinigameTemplateGameMode();
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+private:
+	int32 PlayerIDOfNextPlayer = 0;
 };
 
 
