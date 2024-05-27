@@ -18,6 +18,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	// 먼저들어온 사람부터 0, 1, 2, 3...
+	UPROPERTY(Replicated)
 	int32 PlayerEnterID = 0;
 public:
 	void SetPlayerEnterID(int32 NewEnterID);

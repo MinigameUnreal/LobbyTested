@@ -50,4 +50,10 @@ void AMinigameTemplateGameMode::PostLogin(APlayerController* NewPlayer)
 	LobbyPS->SetPlayerEnterID(PlayerIDOfNextPlayer);
 	PlayerIDOfNextPlayer++;
 
+	auto LocalLobbyPC = GetWorld()->GetFirstPlayerController<ALobbyPlayerController>();
+	if (!IsValid(LocalLobbyPC))
+	{
+		return;
+	}
+	LocalLobbyPC->LobbyWidgetUpdate();
 }

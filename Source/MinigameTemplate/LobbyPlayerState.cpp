@@ -172,6 +172,7 @@ void ALobbyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 
 	DOREPLIFETIME(ALobbyPlayerState, IsRedTeam);
 	DOREPLIFETIME(ALobbyPlayerState, SelectedCharacter);
+	DOREPLIFETIME(ALobbyPlayerState, PlayerEnterID);
 }
 
 void ALobbyPlayerState::SetPlayerPawn(APlayerState* Player, APawn* NewPawn, APawn* OldPawn)

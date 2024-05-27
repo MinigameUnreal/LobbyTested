@@ -89,14 +89,14 @@ void ALobbyPlayerController::LobbyWidgetUpdate()
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("LobbyPS Not Valid : LobbyPlayerController LobbyWidgetUpdate()"));
 			continue;
 		}
-		auto PlayerCard = Cast<UPlayerCardWidget>( LobbyWidget->PlayersListWrapBox->GetChildAt( i ) );
+		auto PlayerCard = Cast<UPlayerCardWidget>( LobbyWidget->PlayersListWrapBox->GetChildAt( LobbyPS->GetPlayerEnterID() ));
 		if (!IsValid(PlayerCard))
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("PlayerCard Not Valid : LobbyPlayerController LobbyWidgetUpdate()"));
 			continue;
 		}
 
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, FString::Printf(TEXT("Player %d card ready to edit"), i));
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, FString::Printf(TEXT("Player %d card ready to edit"), LobbyPS->GetPlayerEnterID()));
 		PlayerCard->CardUpdate(LobbyPS->GetIsRedTeam(), LobbyPS->GetSelectedCharacter());
 	}
 	// from game state -> edit widget.
