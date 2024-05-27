@@ -21,7 +21,10 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* CharacterText;
 
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* ReadyTextBlock;
+
 public:
-	void CardUpdate(bool IsRed, const FString& SelectedCharacter);
+	void CardUpdate(const class ALobbyPlayerState* const  LobbyPS);
 	
 };

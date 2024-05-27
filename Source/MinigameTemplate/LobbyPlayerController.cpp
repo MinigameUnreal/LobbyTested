@@ -22,8 +22,6 @@ void ALobbyPlayerController::BeginPlay()
 	if (IsLocalController())
 	{
 		UUserWidget* Widget = CreateWidget<UUserWidget>(this, LobbyWidgetClass);
-		Widget->AddToViewport();
-
 		LobbyWidget = Cast<ULobbyWidget>(Widget);
 		if (!IsValid(LobbyWidget))
 		{
@@ -31,12 +29,20 @@ void ALobbyPlayerController::BeginPlay()
 			return;
 		}
 
+		LobbyWidget->SwitchSwitcherWidget(HasAuthority());
+
+		Widget->AddToViewport();
+
+		
+
+
 		// can i get all playerstate here?
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("%d asdflkjlk"), GetWorld()->GetGameState()->PlayerArray.Num() ) );
 
 		LobbyWidgetUpdate();
 
 	}
+
 
 	
 }
@@ -97,7 +103,7 @@ void ALobbyPlayerController::LobbyWidgetUpdate()
 		}
 
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, FString::Printf(TEXT("Player %d card ready to edit"), LobbyPS->GetPlayerEnterID()));
-		PlayerCard->CardUpdate(LobbyPS->GetIsRedTeam(), LobbyPS->GetSelectedCharacter());
+		PlayerCard->CardUpdate(LobbyPS);
 	}
 	// from game state -> edit widget.
 	//LobbyWidget->PlayersListWrapBox->GetChildAt(0);

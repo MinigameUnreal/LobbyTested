@@ -18,7 +18,7 @@ void ALobbyPlayerState::SetPlayerEnterID(int32 NewEnterID)
 	PlayerEnterID = NewEnterID;
 }
 
-int32 ALobbyPlayerState::GetPlayerEnterID()
+int32 ALobbyPlayerState::GetPlayerEnterID() const
 {
 	return PlayerEnterID;
 }
@@ -40,7 +40,7 @@ void ALobbyPlayerState::SetIsRedTeamTo(bool IsChecked)
 	}
 }
 
-bool ALobbyPlayerState::GetIsRedTeam()
+bool ALobbyPlayerState::GetIsRedTeam() const
 {
 	return IsRedTeam;
 }
@@ -65,7 +65,7 @@ void ALobbyPlayerState::OnRep_IsRedTeam()
 
 void ALobbyPlayerState::OnIsRedTeamChanged()
 {
-	auto LobbyPlayerCharacter = Cast<AMinigameTemplateCharacter> (GetPawn() );
+	AMinigameTemplateCharacter* LobbyPlayerCharacter = Cast<AMinigameTemplateCharacter> (GetPawn() );
 	if (!IsValid(LobbyPlayerCharacter))
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("Pawn From PS Not available"));
@@ -95,7 +95,7 @@ void ALobbyPlayerState::SetSelectedCharacter(FString NewCharacter)
 	}
 }
 
-FString ALobbyPlayerState::GetSelectedCharacter()
+FString ALobbyPlayerState::GetSelectedCharacter() const
 {
 	return SelectedCharacter;
 }
@@ -110,7 +110,7 @@ void ALobbyPlayerState::OnChangeCharacter()
 {
 	// Only In Server.
 	// call controller's change character?
-	auto LobbyPC = Cast<ALobbyPlayerController>(GetPlayerController());
+	ALobbyPlayerController* LobbyPC = Cast<ALobbyPlayerController>(GetPlayerController());
 	if (!IsValid(LobbyPC))
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("PlayerController Not Available : OnChangeCharacter()"));
@@ -128,6 +128,33 @@ void ALobbyPlayerState::OnRep_SelectedCharacter()
 	UpdatePlayerListWidget();
 }
 
+void ALobbyPlayerState::OnRep_bIsHost()
+{
+}
+
+void ALobbyPlayerState::OnRep_bIsReady()
+{
+	// Call On Ready Change..
+	OnReadyChanged();
+}
+
+void ALobbyPlayerState::OnReadyChanged()
+{
+	// change Widget's Readytext...
+}
+
+void ALobbyPlayerState::SetIsReady(bool bNewIsReady)
+{
+	bIsReady = bNewIsReady;
+	// Call On Ready Change...
+	OnReadyChanged();
+}
+
+bool ALobbyPlayerState::GetIsReady() const
+{
+	return bIsReady;
+}
+
 void ALobbyPlayerState::UpdatePlayerListWidget()
 {
 	AController* PC = GetWorld()->GetFirstPlayerController();
@@ -139,7 +166,7 @@ void ALobbyPlayerState::UpdatePlayerListWidget()
 	}
 
 	// call PC's edit widget.
-	auto LobbyPC = Cast<ALobbyPlayerController>(PC);
+	ALobbyPlayerController* LobbyPC = Cast<ALobbyPlayerController>(PC);
 	if (!IsValid(LobbyPC))
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("LobbyPC Is Not Valid : LobbyPS -> UpdatePlayerListWidget()")); //BP.... (No StaticClass(). It Returns Pawn
@@ -162,7 +189,7 @@ void ALobbyPlayerState::SetPlayerPawn(APlayerState* Player, APawn* NewPawn, APaw
 {
 	if (!HasAuthority())
 	{
-		auto NewCharacter = Cast<AMinigameTemplateCharacter>(NewPawn);
+		AMinigameTemplateCharacter* NewCharacter = Cast<AMinigameTemplateCharacter>(NewPawn);
 		if (!IsValid(NewCharacter))
 		{
 			return;
@@ -171,7 +198,7 @@ void ALobbyPlayerState::SetPlayerPawn(APlayerState* Player, APawn* NewPawn, APaw
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("OnPawnSet"));
 	}
 
-	auto LobbyPC = Cast<ALobbyPlayerController>(GetWorld()->GetFirstPlayerController());
+	ALobbyPlayerController* LobbyPC = Cast<ALobbyPlayerController>(GetWorld()->GetFirstPlayerController());
 	if (!IsValid(LobbyPC))
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("LobbyPC Is Not Valid : LobbyPS -> UpdatePlayerListWidget()")); //BP.... (No StaticClass(). It Returns Pawn

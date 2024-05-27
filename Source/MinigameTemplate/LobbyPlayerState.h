@@ -22,16 +22,16 @@ protected:
 	int32 PlayerEnterID = 0;
 public:
 	void SetPlayerEnterID(int32 NewEnterID);
-	int32 GetPlayerEnterID();
+	int32 GetPlayerEnterID() const;
 
-// ----------- IsRedTeam's
+// ----------- IsRedTeam's ----------------------------
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_IsRedTeam)
 	bool IsRedTeam;
 
 public:
 	void SetIsRedTeamTo(bool IsChecked);
-	bool GetIsRedTeam();
+	bool GetIsRedTeam() const;
 
 protected:
 	UFUNCTION(Server, Reliable)
@@ -43,14 +43,14 @@ protected:
 
 	void OnIsRedTeamChanged();
 
-// ------------ Selected Character's 
+// ------------ Selected Character's ----------------------
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_SelectedCharacter)
 	FString SelectedCharacter = "Quinn";
 
 public:
 	void SetSelectedCharacter(FString NewCharacter);
-	FString GetSelectedCharacter();
+	FString GetSelectedCharacter() const;
 
 protected:
 	UFUNCTION(Server, Reliable)
@@ -61,8 +61,28 @@ protected:
 	UFUNCTION()
 	void OnRep_SelectedCharacter();
 
+// ------------- IsReady, IsHost Related Functions-------------
+protected:
+	UPROPERTY(ReplicatedUsing = OnRep_bIsHost)
+	bool bIsHost;
 
-	// ------------- Change LobbyUI's Player List widget.
+	UPROPERTY(ReplicatedUsing = OnRep_bIsReady)
+	bool bIsReady;
+
+	UFUNCTION()
+	void OnRep_bIsHost();
+
+	UFUNCTION()
+	void OnRep_bIsReady();
+
+	void OnReadyChanged();
+
+
+public:
+	void SetIsReady(bool bNewIsReady);
+	bool GetIsReady() const;
+
+// ------------- Change LobbyUI's Player List widget. ------------
 protected:
 	// Update UI
 	void UpdatePlayerListWidget();

@@ -17,4 +17,10 @@ class MINIGAMETEMPLATE_API ULobbyWidget : public UUserWidget
 public:
 	UPROPERTY(meta = (BindWidget))
 	class UWrapBox* PlayersListWrapBox;
+
+	UPROPERTY(meta = (BindWidget))
+	class UWidgetSwitcher* ReadyOrStartSwitcher;
+
+public:
+	void SwitchSwitcherWidget(bool bIsReady);
 };
