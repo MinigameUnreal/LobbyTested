@@ -4,64 +4,48 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
+#include "BasePlayerState.h"
 #include "LobbyPlayerState.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MINIGAMETEMPLATE_API ALobbyPlayerState : public APlayerState
+class MINIGAMETEMPLATE_API ALobbyPlayerState : public ABasePlayerState
 {
 	GENERATED_BODY()
 
 protected:
 	virtual void BeginPlay() override;
 
-	// 먼저들어온 사람부터 0, 1, 2, 3...
-	UPROPERTY(Replicated)
-	int32 PlayerEnterID = 0;
+// -------- Player Enter ID Function Override -------
 public:
-	void SetPlayerEnterID(int32 NewEnterID);
-	int32 GetPlayerEnterID() const;
+	virtual void SetPlayerEnterID(int32 NewEnterID) override;
 
 // ----------- IsRedTeam's ----------------------------
-protected:
-	UPROPERTY(ReplicatedUsing = OnRep_IsRedTeam)
-	bool IsRedTeam;
-
 public:
-	void SetIsRedTeamTo(bool IsChecked);
-	bool GetIsRedTeam() const;
+	virtual void SetIsRedTeamTo(bool IsChecked) override;
 
 protected:
 	UFUNCTION(Server, Reliable)
 	void SV_SetIsRedTeamTo(bool IsChecked);
 	
 	//클라이언트에서 값 변경 notify받는 함수, 안에서 OnIsRedTeamChanged호출.
-	UFUNCTION()
-	void OnRep_IsRedTeam();
-
-	void OnIsRedTeamChanged();
+	virtual void OnRep_IsRedTeam() override;
+	virtual void OnIsRedTeamChanged() override;
 
 // ------------ Selected Character's ----------------------
-protected:
-	UPROPERTY(ReplicatedUsing = OnRep_SelectedCharacter)
-	FString SelectedCharacter = "Quinn";
-
 public:
-	void SetSelectedCharacter(FString NewCharacter);
-	FString GetSelectedCharacter() const;
+	virtual void SetSelectedCharacter(FString NewCharacter) override;
 
 protected:
 	UFUNCTION(Server, Reliable)
 	void SV_RequestChangeCharacter(const FString& NewCharacterName);
 
-	void OnChangeCharacter();
-	
-	UFUNCTION()
-	void OnRep_SelectedCharacter();
+	virtual void OnChangeCharacter() override;
+	virtual void OnRep_SelectedCharacter() override;
 
-// ------------- IsReady, IsHost Related Functions-------------
+// ------------- IsReady, IsHost Related Functions Only In LobbyPlayerState -------------
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_bIsHost)
 	bool bIsHost;
@@ -87,11 +71,12 @@ protected:
 	// Update UI
 	void UpdatePlayerListWidget();
 
+
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 
-	// Call when OnPawnSet Done.
+	// Call when OnPawnSet Done. Since TeamColor is not replicated, Do Initial Paint.
 	UFUNCTION()
 	void SetPlayerPawn(APlayerState* Player, APawn* NewPawn, APawn* OldPawn);
 };

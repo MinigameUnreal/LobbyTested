@@ -18,11 +18,6 @@ void ALobbyPlayerState::SetPlayerEnterID(int32 NewEnterID)
 	PlayerEnterID = NewEnterID;
 }
 
-int32 ALobbyPlayerState::GetPlayerEnterID() const
-{
-	return PlayerEnterID;
-}
-
 void ALobbyPlayerState::SetIsRedTeamTo(bool IsChecked)
 {
 	//if server
@@ -38,11 +33,6 @@ void ALobbyPlayerState::SetIsRedTeamTo(bool IsChecked)
 		// 서버로 전송. 
 		SV_SetIsRedTeamTo(IsChecked);
 	}
-}
-
-bool ALobbyPlayerState::GetIsRedTeam() const
-{
-	return IsRedTeam;
 }
 
 void ALobbyPlayerState::SV_SetIsRedTeamTo_Implementation(bool IsChecked)
@@ -95,11 +85,6 @@ void ALobbyPlayerState::SetSelectedCharacter(FString NewCharacter)
 	}
 }
 
-FString ALobbyPlayerState::GetSelectedCharacter() const
-{
-	return SelectedCharacter;
-}
-
 void ALobbyPlayerState::SV_RequestChangeCharacter_Implementation(const FString& NewCharacterName)
 {
 	SelectedCharacter = NewCharacterName;
@@ -128,6 +113,8 @@ void ALobbyPlayerState::OnRep_SelectedCharacter()
 	UpdatePlayerListWidget();
 }
 
+
+// ----------------- IsHost, IsReady ------------------------------
 void ALobbyPlayerState::OnRep_bIsHost()
 {
 }
@@ -154,6 +141,8 @@ bool ALobbyPlayerState::GetIsReady() const
 {
 	return bIsReady;
 }
+// ----------------- IsHost, IsReady ------------------------------
+
 
 void ALobbyPlayerState::UpdatePlayerListWidget()
 {
@@ -176,13 +165,13 @@ void ALobbyPlayerState::UpdatePlayerListWidget()
 
 }
 
+
+
 void ALobbyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ALobbyPlayerState, IsRedTeam);
-	DOREPLIFETIME(ALobbyPlayerState, SelectedCharacter);
-	DOREPLIFETIME(ALobbyPlayerState, PlayerEnterID);
+	DOREPLIFETIME(ALobbyPlayerState, bIsHost);
+	DOREPLIFETIME(ALobbyPlayerState, bIsReady);
 }
 
 void ALobbyPlayerState::SetPlayerPawn(APlayerState* Player, APawn* NewPawn, APawn* OldPawn)

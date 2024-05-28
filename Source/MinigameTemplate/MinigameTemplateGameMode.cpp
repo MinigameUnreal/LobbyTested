@@ -16,8 +16,8 @@ AMinigameTemplateGameMode::AMinigameTemplateGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 
-	PlayerControllerClass = ALobbyPlayerController::StaticClass();
-	PlayerStateClass = ALobbyPlayerState::StaticClass();
+	//PlayerControllerClass = ALobbyPlayerController::StaticClass();
+	//PlayerStateClass = ALobbyPlayerState::StaticClass();
 }
 
 void AMinigameTemplateGameMode::PostLogin(APlayerController* NewPlayer)

@@ -21,10 +21,13 @@ void ALobbyPlayerController::BeginPlay()
 
 	if (IsLocalController())
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("---LobbyPC BeginPlay()---"));
+
 		UUserWidget* Widget = CreateWidget<UUserWidget>(this, LobbyWidgetClass);
 		LobbyWidget = Cast<ULobbyWidget>(Widget);
 		if (!IsValid(LobbyWidget))
 		{
+			// After Server Travel. Why This Message Pops up?. Even This Controller is not the controller of gamemap.
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("LobbyWidget Error : LobbyPlayerController BeginPlay()"));
 			return;
 		}
@@ -32,12 +35,6 @@ void ALobbyPlayerController::BeginPlay()
 		LobbyWidget->SwitchSwitcherWidget(HasAuthority());
 
 		Widget->AddToViewport();
-
-		
-
-
-		// can i get all playerstate here?
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("%d asdflkjlk"), GetWorld()->GetGameState()->PlayerArray.Num() ) );
 
 		LobbyWidgetUpdate();
 

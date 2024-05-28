@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "LobbyPlayerState.h"
+#include "BasePlayerState.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -64,11 +65,11 @@ void AMinigameTemplateCharacter::BeginPlay()
 
 	MeshMID = GetMesh()->CreateDynamicMaterialInstance(0);
 
-	auto LobbyPS = GetPlayerState<ALobbyPlayerState>();
-	if (IsValid(LobbyPS))
+	auto PS = GetPlayerState<ABasePlayerState>();
+	if (IsValid(PS))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Magenta, TEXT("Char BeginPlay, SetMaterial Success?"));
-		SetMaterialByPlayerTeam(LobbyPS->GetIsRedTeam());
+		//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Magenta, TEXT("Char BeginPlay, SetMaterial Success?"));
+		SetMaterialByPlayerTeam(PS->GetIsRedTeam());
 	}
 
 	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("Char Begin Play MID Setted"));
@@ -117,8 +118,18 @@ void AMinigameTemplateCharacter::PossessedBy(AController* NewController)
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 
-		auto LobbyPS = PlayerController->GetPlayerState<ALobbyPlayerState>();
-		SetMaterialByPlayerTeam(LobbyPS->GetIsRedTeam());
+		auto PS = PlayerController->GetPlayerState<ABasePlayerState>();
+		if (!IsValid(PS))
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1, 
+				10.f, 
+				FColor::Red, 
+				TEXT("PlayerState Not Valid : AMinigameTemplateCharacter::PossessedBY()")
+			);
+			return;
+		}
+		SetMaterialByPlayerTeam(PS->GetIsRedTeam());
 	}
 
 
